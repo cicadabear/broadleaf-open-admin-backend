@@ -42,32 +42,19 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.*;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
+import javax.persistence.Parameter;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
@@ -96,6 +83,15 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(generator = "CustomerId")
+    @GenericGenerator(
+            name="CustomerId",
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name="segment_value", value="CustomerImpl"),
+                    @org.hibernate.annotations.Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.CustomerImpl")
+            }
+    )
     @Column(name = "CUSTOMER_ID")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
